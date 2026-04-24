@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - BrainShare{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="form-container">
+            <h2 style="color: #333; text-align: center; margin-bottom: 30px;">{{ title }}</h2>
+
+            <form method="post" class="styled-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Название сообщества:</label>
+                    <input type="text" name="name" required
+                           placeholder="Например: Матан для чайников">
+                </div>
+
+                <div class="form-group">
+                    <label>Описание:</label>
+                    <textarea name="description" rows="5"
+                              placeholder="О чём это сообщество?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Путь к картинке (необязательно):</label>
+                    <input type="text" name="image_path"
+                           placeholder="Например: img/communities/study.jpg">
+                </div>
+
+                <button type="submit" class="submit-button">Создать</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'communities:community_list' %}" class="back-link">
+                    ← Отмена
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.submit-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.back-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

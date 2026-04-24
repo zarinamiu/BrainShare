@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .meme-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #666;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .meme-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .meme-header {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        padding: 25px;
+    }
+    .meme-title {
+        font-size: 24px;
+        margin: 0 0 10px 0;
+    }
+    .meme-meta {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    .meme-image {
+        width: 100%;
+        max-height: 600px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+    .meme-body {
+        padding: 25px;
+    }
+    .meme-description {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    .meme-stats {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+        color: #888;
+    }
+    .meme-actions {
+        padding: 0 25px 25px;
+        display: flex;
+        gap: 15px;
+    }
+    .btn-edit {
+        background: #fff;
+        color: #ff6b6b;
+        border: 2px solid #ff6b6b;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-edit:hover {
+        background: #ff6b6b;
+        color: white;
+    }
+    .btn-delete {
+        background: #fff;
+        color: #e74c3c;
+        border: 2px solid #e74c3c;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-delete:hover {
+        background: #e74c3c;
+        color: white;
+    }
+    .comments-section {
+        margin-top: 40px;
+    }
+    .comments-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    .comment-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-left: 3px solid #ff6b6b;
+    }
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+    .comment-author {
+        font-weight: 600;
+        color: #ff6b6b;
+    }
+    .comment-date {
+        color: #999;
+    }
+    .comment-text {
+        color: #555;
+    }
+    .comment-actions {
+        margin-top: 8px;
+        display: flex;
+        gap: 10px;
+    }
+    .btn-comment-edit {
+        text-decoration: none;
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+    .btn-comment-edit:hover {
+        background: #ff6b6b;
+        color: white;
+    }
+    .btn-comment-delete {
+        text-decoration: none;
+        border: 1px solid #e74c3c;
+        color: #e74c3c;
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+    .btn-comment-delete:hover {
+        background: #e74c3c;
+        color: white;
+    }
+    .no-comments {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .comment-form-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+    .comment-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+        min-height: 80px;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    .comment-form textarea:focus {
+        outline: none;
+        border-color: #ff6b6b;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    .login-prompt {
+        background: #fff3cd;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 25px;
+    }
+    .login-prompt a {
+        color: #856404;
+        font-weight: bold;
+    }
+</style>
+
+<div class="meme-container">
+    <a href="{% url 'memes:meme_list' %}" class="back-link">← Назад к мемам</a>
+
+    <div class="meme-card">
+        <div class="meme-header">
+            <h1 class="meme-title">{{ meme.title }}</h1>
+            <div class="meme-meta">
+                👤 {{ meme.author.username }} | 📅 {{ meme.created_at|date:"d.m.Y" }} | 📂 {{ meme.category }}
+            </div>
+        </div>
+        
+        <img src="{{ meme.image_url }}" class="meme-image" alt="{{ meme.title }}">
+        
+        <div class="meme-body">
+            <p class="meme-description">{{ meme.description }}</p>
+            <div class="meme-stats">
+                <span>❤️ {{ meme.likes_count }} лайков</span>
+                <span>💬 {{ meme.comments.count }} комментариев</span>
+            </div>
+        </div>
+        
+        {% if request.user == meme.author %}
+        <div class="meme-actions">
+            <a href="{% url 'memes:meme_edit' meme.id %}" class="btn-edit">✏️ Редактировать</a>
+            <a href="{% url 'memes:meme_delete' meme.id %}" class="btn-delete">🗑️ Удалить</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="comments-section">
+        <h2 class="comments-title">💬 Комментарии ({{ comments.count }})</h2>
+
+        {% for comment in comments %}
+        <div class="comment-card">
+            <div class="comment-header">
+                <span class="comment-author">{{ comment.author.username }}</span>
+                <span class="comment-date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            <div class="comment-text">{{ comment.text }}</div>
+            
+            {% if request.user == comment.author %}
+            <div class="comment-actions">
+                <a href="{% url 'memes:comment_edit' comment.id %}" class="btn-comment-edit">✏️ Редактировать</a>
+                <a href="{% url 'memes:comment_delete' comment.id %}" class="btn-comment-delete">🗑️ Удалить</a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="no-comments">
+            😔 Комментариев пока нет. Будьте первым!
+        </div>
+        {% endfor %}
+
+        {% if request.user.is_authenticated %}
+            <div class="comment-form-section">
+                <h3>✍️ Оставить комментарий</h3>
+                <form method="post" class="comment-form">
+                    {% csrf_token %}
+                    <textarea name="text" placeholder="Напишите ваш комментарий..." required></textarea>
+                    <button type="submit" class="btn-submit">Отправить</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="login-prompt">
+                <p>🔒 Только зарегистрированные пользователи могут оставлять комментарии.</p>
+                <p>
+                    <a href="{% url 'users:login' %}?next={{ request.path }}">🔑 Войти</a> или
+                    <a href="{% url 'users:register' %}">📝 Зарегистрироваться</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

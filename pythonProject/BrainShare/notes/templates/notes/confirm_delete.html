@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить конспект - BrainShare{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="confirm-box">
+            <div class="warning-icon">⚠️</div>
+            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">
+                Удалить конспект?
+            </h2>
+            <p style="color: #666; text-align: center; margin-bottom: 30px;">
+                Вы уверены, что хотите удалить конспект "<strong>{{ note.title }}</strong>"?
+                Это действие нельзя отменить.
+            </p>
+
+            <div class="confirm-actions">
+                <a href="{% url 'notes:note_detail' note.id %}" class="cancel-btn">Отмена</a>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.confirm-box {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    margin: 50px auto;
+}
+
+.warning-icon {
+    font-size: 60px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.cancel-btn {
+    padding: 12px 30px;
+    border-radius: 25px;
+    background: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+.delete-btn {
+    padding: 12px 30px;
+    border-radius: 25px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: #ff5252;
+}
+</style>
+{% endblock %}

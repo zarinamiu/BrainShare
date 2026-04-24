@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .form-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #ff6b6b;
+    }
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-card">
+        <h1 class="form-title">{{ title }}</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>{{ form.title.label }}</label>
+                {{ form.title }}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.image_url.label }}</label>
+                {{ form.image_url }}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.category.label }}</label>
+                {{ form.category }}
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn-primary">💾 Сохранить</button>
+                <a href="{% url 'memes:meme_list' %}" class="btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

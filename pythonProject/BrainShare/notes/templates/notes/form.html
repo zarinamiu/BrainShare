@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} — BrainShare{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-container">
+        <h1>{{ title }}</h1>
+        
+        <form method="post" enctype="multipart/form-data" class="note-form">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="form-errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+                {{ form.subject }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+                {{ form.content }}
+            </div>
+            
+            <div class="form-group image-upload">
+                <label for="{{ form.image.id_for_label }}">{{ form.image.label }}</label>
+                <div class="image-preview" id="image-preview">
+                    {% if note.image %}
+                        <img src="{{ note.image.url }}" alt="Текущее изображение">
+                    {% else %}
+                        <div class="no-image">Нажмите для выбора изображения</div>
+                    {% endif %}
+                </div>
+                {{ form.image }}
+            </div>
+            
+            <div class="form-group checkbox">
+                <label>
+                    {{ form.is_public }}
+                    <span>{{ form.is_public.label }}</span>
+                </label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Сохранить</button>
+                <a href="{% url 'notes:note_list' %}" class="btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.form-container h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+.form-input, .form-textarea {
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.image-upload {
+    position: relative;
+}
+
+.image-preview {
+    width: 100%;
+    height: 200px;
+    border: 3px dashed #ccc;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    background: #f8f9fa;
+    margin-bottom: 10px;
+}
+
+.image-preview:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+}
+
+.image-upload input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 200px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.form-group.checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.form-group.checkbox input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-cancel {
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    background: #f0f0f5;
+    color: #555;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #e0e0e5;
+}
+
+.form-errors {
+    background: #fee;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.form-errors .error {
+    color: #ff6b6b;
+    font-size: 14px;
+}
+</style>
+
+<script>
+document.getElementById('id_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

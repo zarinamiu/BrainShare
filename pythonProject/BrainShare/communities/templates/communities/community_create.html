@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать сообщество — BrainShare{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="form-container">
+        <h1>✨ Создать сообщество</h1>
+        
+        <form method="post" enctype="multipart/form-data" class="community-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="name">Название сообщества *</label>
+                <input type="text" id="name" name="name" required class="form-input" placeholder="Например: Математика МГУ">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" name="description" rows="4" class="form-textarea" placeholder="Расскажите о вашем сообществе..."></textarea>
+            </div>
+            
+            <div class="form-group image-upload">
+                <label for="image">Изображение</label>
+                <div class="image-preview" id="image-preview">
+                    <div class="no-image">Нажмите для выбора изображения</div>
+                </div>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" name="is_private" id="is_private">
+                    <span>🔒 Приватное сообщество</span>
+                </label>
+                <p class="hint">Только участники могут видеть содержимое приватного сообщества</p>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Создать сообщество</button>
+                <a href="{% url 'communities:community_list' %}" class="btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.form-container h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.community-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+.form-input, .form-textarea {
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.image-preview {
+    width: 100%;
+    height: 200px;
+    border: 3px dashed #ccc;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    background: #f8f9fa;
+    margin-bottom: 10px;
+}
+
+.image-preview:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+}
+
+#image {
+    width: 100%;
+}
+
+.form-group.checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.form-group.checkbox input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.hint {
+    font-size: 13px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-cancel {
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    background: #f0f0f5;
+    color: #555;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #e0e0e5;
+}
+</style>
+
+<script>
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ community.name }} - BrainShare{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="community-detail">
+            <div class="community-header">
+                {% if community.image_path %}
+                <div class="community-image">
+                    <img src="{% static community.image_path %}"
+                         alt="{{ community.name }}"
+                         style="max-width: 400px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                </div>
+                {% endif %}
+
+                <div class="community-info">
+                    <h1 style="color: #333; font-size: 36px; margin-bottom: 15px;">{{ community.name }}</h1>
+                    <p class="community-meta">
+                        👥 {{ community.members_count }} участников
+                        • 📅 Создано {{ community.created_at|date:"d.m.Y" }}
+                    </p>
+                    <p style="color: #666; font-size: 16px; line-height: 1.6;">{{ community.description }}</p>
+                    <p style="color: #999; margin-top: 15px;">
+                        Создатель: <strong>{{ community.author.username }}</strong>
+                    </p>
+
+                    {% if user.is_authenticated %}
+                        {% if is_member %}
+                        <a href="{% url 'communities:community_leave' community.id %}"
+                           class="action-button leave">
+                            Выйти из сообщества
+                        </a>
+                        {% else %}
+                        <a href="{% url 'communities:community_join' community.id %}"
+                           class="action-button join">
+                            Вступить в сообщество
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <a href="{% url 'communities:community_list' %}" class="back-link">
+                    ← Назад к списку сообществ
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.community-detail {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    margin-top: 30px;
+}
+
+.community-header {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.community-image {
+    flex-shrink: 0;
+}
+
+.community-info {
+    flex: 1;
+}
+
+.community-meta {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.action-button {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.action-button.join {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.action-button.leave {
+    background: #f5f5f5;
+    color: #666;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .community-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

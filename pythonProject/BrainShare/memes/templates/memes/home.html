@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="meme-detail">
+    <a href="{% url 'memes:meme_list' %}" class="btn btn-back">← Назад к мемам</a>
+
+    <h1>{{ meme.title }}</h1>
+
+    <div class="meme-image-large">
+        <img src="{{ meme.image_url }}" alt="{{ meme.title }}" onerror="this.src='https://placehold.co/600x400/cccccc/666666?text=Image+Not+Found'">
+    </div>
+
+    {% if meme.description %}
+    <p class="description">{{ meme.description }}</p>
+    {% endif %}
+
+    <div class="meme-meta">
+        <p><strong>👤 Автор:</strong> {{ meme.author.username }}</p>
+        <p><strong>📅 Дата создания:</strong> {{ meme.created_at|date:"d.m.Y H:i" }}</p>
+        <p><strong>❤️ Лайков:</strong> {{ meme.likes_count }}</p>
+        <p><strong>📁 Категория:</strong> {{ meme.category }}</p>
+        {% if meme.is_approved %}
+        <span class="status-approved">✅ Одобрено</span>
+        {% else %}
+        <span class="status-pending">⏳ На модерации</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

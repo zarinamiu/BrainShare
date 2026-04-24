@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .memes-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .page-title {
+        font-size: 32px;
+        color: #333;
+        margin: 0;
+    }
+    .btn-create {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+    .btn-create:hover {
+        transform: translateY(-2px);
+    }
+    .memes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+    .meme-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .meme-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+    .meme-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        background: #f5f5f5;
+    }
+    .meme-body {
+        padding: 20px;
+    }
+    .meme-title {
+        font-size: 18px;
+        margin: 0 0 10px 0;
+    }
+    .meme-title a {
+        color: #333;
+        text-decoration: none;
+    }
+    .meme-title a:hover {
+        color: #ff6b6b;
+    }
+    .meme-meta {
+        font-size: 13px;
+        color: #888;
+        display: flex;
+        gap: 15px;
+    }
+    .no-memes {
+        text-align: center;
+        padding: 60px;
+        color: #999;
+    }
+</style>
+
+<div class="memes-container">
+    <div class="page-header">
+        <h1 class="page-title">😂 Мемы</h1>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'memes:meme_create' %}" class="btn-create">➕ Создать мем</a>
+        {% endif %}
+    </div>
+
+    <div class="memes-grid">
+        {% for meme in memes %}
+        <div class="meme-card">
+            <a href="{% url 'memes:meme_detail' meme.id %}">
+                <img src="{{ meme.image_url }}" class="meme-image" alt="{{ meme.title }}">
+            </a>
+            <div class="meme-body">
+                <h2 class="meme-title">
+                    <a href="{% url 'memes:meme_detail' meme.id %}">{{ meme.title }}</a>
+                </h2>
+                <div class="meme-meta">
+                    <span>❤️ {{ meme.likes_count }}</span>
+                    <span>💬 {{ meme.comments.count }}</span>
+                    <span>👤 {{ meme.author.username }}</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-memes">
+            <p>😔 Мемов пока нет.</p>
+            {% if request.user.is_authenticated %}
+            <p><a href="{% url 'memes:meme_create' %}" style="color: #ff6b6b;">Создайте первый!</a></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

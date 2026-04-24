@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ note.title }}</h1>
+
+    <div class="note-detail">
+        <div class="note-meta">
+            <p><strong>📖 Предмет:</strong> {{ note.subject }}</p>
+            <p><strong>👤 Автор:</strong> {{ note.author.username }}</p>
+            <p><strong>📅 Создано:</strong> {{ note.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>🔄 Обновлено:</strong> {{ note.updated_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>👁️ Просмотров:</strong> {{ note.views_count }}</p>
+            <p><strong>Статус:</strong>
+                {% if note.is_public %}
+                    <span class="status-public">🌐 Публичный</span>
+                {% else %}
+                    <span class="status-private">🔒 Приватный</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="note-content">
+            <h2>Содержание</h2>
+            <p>{{ note.content|linebreaks }}</p>
+        </div>
+
+        {% if links %}
+            <div class="note-links">
+                <h2>🔗 Полезные ссылки</h2>
+                <ul>
+                    {% for link in links %}
+                        <li>
+                            <a href="{{ link.url }}" target="_blank">{{ link.url }}</a>
+                            {% if link.description %}
+                                <span class="link-description">- {{ link.description }}</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <a href="{% url 'notes:note_list' %}" class="btn btn-back">← Назад к списку</a>
+    </div>
+{% endblock %}

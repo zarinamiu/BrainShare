@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ community.name }}</h1>
+
+    <div class="community-detail">
+        <p class="description">{{ community.description }}</p>
+
+        <div class="community-info">
+            <p><strong>📅 Создано:</strong> {{ community.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>👥 Участников:</strong> {{ community.members_count }}</p>
+            <p><strong>Статус:</strong>
+                {% if community.is_active %}
+                    <span class="status-active">✅ Активно</span>
+                {% else %}
+                    <span class="status-inactive">❌ Неактивно</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <h2>Участники сообщества</h2>
+        <div class="members-list">
+            {% for member in members %}
+                <div class="member-card">
+                    <p><strong>👤 Пользователь:</strong> {{ member.user.username }}</p>
+                    <p><strong>📅 Вступил:</strong> {{ member.joined_at|date:"d.m.Y" }}</p>
+                    {% if member.is_admin %}
+                        <span class="admin-badge">👑 Администратор</span>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>Участников пока нет.</p>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'community_list' %}" class="btn btn-back">← Назад к списку</a>
+    </div>
+{% endblock %}
