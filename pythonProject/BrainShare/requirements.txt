@@ -1,8 +1,8 @@
 # Основные компоненты Django и Channels
-Django==6.0.2
-channels==4.3.2
-channels_redis==4.3.0
-daphne==4.2.1
+Django
+channels
+channels_redis
+daphne
 
 # Аутентификация и API (DRF)
 djangorestframework==3.17.1
