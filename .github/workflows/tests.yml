@@ -9,6 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    # Указываем GitHub выполнять все команды внутри папки с Django
+    defaults:
+      run:
+        working-directory: pythonProject/BrainShare
 
     # ===== Services  =====
     services:
@@ -48,6 +53,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: 'pip'
+          cache-dependency-path: pythonProject/BrainShare/requirements.txt
 
       # 3. Устанавливаем зависимости
       - name: Install dependencies
