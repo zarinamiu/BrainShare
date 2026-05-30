@@ -4,60 +4,73 @@
 
 {% block content %}
 <div class="profile-page">
+
+    <!-- Шапка профиля: Аватар и базовая информация -->
     <div class="profile-header">
         <div class="avatar-section">
             <div class="avatar-wrapper">
                 {% if profile.avatar %}
                     <img src="{{ profile.avatar.url }}" alt="Аватар" class="profile-avatar" id="avatar-img">
                 {% else %}
+                    <!-- Если аватара нет, показываем первую букву имени пользователя -->
                     <div class="profile-avatar-placeholder" id="avatar-img">
-                        {{ user.username|slice:":1"|upper }}
+                        {{ user_obj.username|slice:":1"|upper }}
                     </div>
                 {% endif %}
+
+                <!-- Кнопка-иконка для вызова выбора файла -->
                 <label for="avatar-input" class="avatar-edit-btn" title="Изменить аватар">
                     📷
                 </label>
             </div>
-            <form method="post" enctype="multipart/form-data" id="avatar-form" class="hidden-form">
+
+            <!-- Скрытая форма для моментального обновления аватара при выборе файла -->
+            <form method="post" enctype="multipart/form-data" id="avatar-form" class="hidden-form" style="display: none;">
                 {% csrf_token %}
-                <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="this.form.submit()">
+                <input type="file" id="avatar-input" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit()">
                 <input type="hidden" name="update_avatar" value="1">
             </form>
         </div>
 
         <div class="profile-info">
-            <h1>{{ user.username }}</h1>
-            <p class="profile-email">{{ user.email|default:"Email не указан" }}</p>
+            <h1>{{ user_obj.username }}</h1>
+            <p class="profile-email">{{ user_obj.email|default:"Email не указан" }}</p>
             {% if profile.bio %}
                 <p class="profile-bio">{{ profile.bio }}</p>
+            {% else %}
+                <p class="profile-bio" style="color: #888; font-style: italic;">О себе: Не указано</p>
             {% endif %}
         </div>
     </div>
 
-    <div class="profile-form-container">
+    <!-- Блок редактирования текстовых данных -->
+    <div class="profile-form-container" style="margin-top: 40px;">
         <h2>Редактировать профиль</h2>
-        <form method="post" enctype="multipart/form-data" class="profile-form">
+        <form method="post" class="profile-form">
             {% csrf_token %}
 
-            <div class="form-group">
-                <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="username" value="{{ user.username }}" class="form-input">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold;">Имя пользователя</label>
+                <input type="text" id="username" name="username" value="{{ user_obj.username }}" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
             </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" class="form-input">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="email" style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                <input type="email" id="email" name="email" value="{{ user_obj.email }}" class="form-input" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
             </div>
 
-            <div class="form-group">
-                <label for="bio">О себе</label>
-                <textarea id="bio" name="bio" rows="4" class="form-textarea">{{ profile.bio }}</textarea>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="bio" style="display: block; margin-bottom: 5px; font-weight: bold;">О себе</label>
+                <textarea id="bio" name="bio" rows="4" class="form-textarea" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">{{ profile.bio|default:"" }}</textarea>
             </div>
 
-            <button type="submit" class="btn-primary">Сохранить изменения</button>
+            <button type="submit" class="btn-primary" style="background: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Сохранить изменения
+            </button>
         </form>
     </div>
 </div>
+
 
 <style>
 .profile-page {

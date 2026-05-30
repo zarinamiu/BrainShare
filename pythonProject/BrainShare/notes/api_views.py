@@ -8,8 +8,8 @@ from .serializers import NoteSerializer, NoteListSerializer, CommentSerializer
     tags=['Конспекты'],
     description='Список всех публичных конспектов'
 )
-class NoteListAPIView(generics.ListAPIView):
-    """API для получения списка конспектов"""
+class NoteListAPIView(generics.ListCreateAPIView):
+    """API для получения списка конспектов и создания новых"""
     serializer_class = NoteListSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -19,6 +19,15 @@ class NoteListAPIView(generics.ListAPIView):
         if subject:
             queryset = queryset.filter(subject__icontains=subject)
         return queryset
+
+    def get_serializer_class(self):
+        """Используем полный сериализатор для создания"""
+        if self.request.method == 'POST':
+            return NoteSerializer
+        return NoteListSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 @extend_schema(

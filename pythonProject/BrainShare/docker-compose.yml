@@ -1,0 +1,74 @@
+version: '3.8'
+services:
+  # ===== PostgreSQL Database =====
+  db:
+    image: postgres:15
+    container_name: brainshare_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: brainshare_db
+      POSTGRES_USER: brainshare_user
+      POSTGRES_PASSWORD: brainshare_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U brainshare_user -d brainshare_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== Redis (для Channels) =====
+  redis:
+    image: redis:7-alpine
+    container_name: brainshare_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== Django Application =====
+  web:
+    build: .
+    container_name: brainshare_web
+    restart: unless-stopped
+    command: >
+      bash -c "
+        python manage.py migrate &&
+        daphne -b 0.0.0.0 -p 8000 brainshare.asgi:application
+      "
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-dev-key-change-in-production}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=brainshare_db
+      - DB_USER=brainshare_user
+      - DB_PASSWORD=brainshare_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+
+# ===== Volumes =====
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:

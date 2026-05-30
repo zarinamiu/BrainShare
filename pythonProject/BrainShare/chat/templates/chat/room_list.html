@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Комнаты чата | BrainShare{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 40px auto; padding: 20px;">
+    <h1 style="font-size: 36px; color: #2d4f91; margin-bottom: 15px;">💬 Комнаты чата</h1>
+    <p style="font-size: 18px; color: #555; margin-bottom: 30px;">
+        Выберите комнату для общения в реальном времени.
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+        {% for room in rooms %}
+            <a href="{% url 'chat:room' room %}"
+               style="display: block; text-decoration: none; background: white; padding: 24px; border-radius: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition: 0.2s;">
+                <div style="font-size: 24px; font-weight: 800; color: #2d4f91; margin-bottom: 10px;">
+                    # {{ room }}
+                </div>
+                <div style="color: #666; font-size: 15px;">
+                    Открыть комнату {{ room }}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

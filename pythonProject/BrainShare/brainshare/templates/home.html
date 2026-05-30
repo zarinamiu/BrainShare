@@ -1,174 +1,61 @@
 {% extends 'base.html' %}
 
-{% block title %}BrainShare - Делись знаниями{% endblock %}
+{% block title %}Главная | BrainShare{% endblock %}
 
 {% block content %}
-<main>
-    <!-- Hero Banner -->
-    <section class="hero-banner">
-        <div class="container">
-            <div class="hero-content">
-                <h1>🧠 BrainShare</h1>
-                <p class="hero-subtitle">Платформа для обмена учебными материалами</p>
-                <div class="hero-buttons">
-                    <a href="{% url 'notes:note_list' %}" class="btn btn-primary">📚 Конспекты</a>
-                    <a href="{% url 'memes:meme_list' %}" class="btn btn-secondary">😂 Мемы</a>
-                    <a href="{% url 'communities:community_list' %}" class="btn btn-secondary">👥 Сообщества</a>
-                </div>
-            </div>
+<div style="max-width: 1100px; margin: 40px auto; padding: 20px;">
+    {% if show_banner %}
+        <div style="background: linear-gradient(135deg, #2d4f91, #4067b1); color: white; padding: 30px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+            <h1 style="font-size: 38px; margin-bottom: 12px;">Добро пожаловать в BrainShare</h1>
+            <p style="font-size: 18px; opacity: 0.95; margin-bottom: 20px;">
+                Платформа для обучения, общения, публикации конспектов, мемов и участия в сообществах.
+            </p>
+            <a href="{% url 'chat:room_list' %}"
+               style="display: inline-block; text-decoration: none; background: white; color: #2d4f91; padding: 12px 20px; border-radius: 12px; font-weight: 700;">
+                Перейти в чат
+            </a>
         </div>
-    </section>
+    {% endif %}
 
-    <!-- Разделы -->
-    <section class="sections">
-        <div class="container">
-            <div class="sections-grid">
-                <div class="section-card">
-                    <div class="section-icon">📚</div>
-                    <h2>Конспекты</h2>
-                    <p>Делитесь учебными материалами</p>
-                    <a href="{% url 'notes:note_list' %}" class="section-link">Перейти →</a>
-                </div>
-                <div class="section-card">
-                    <div class="section-icon">😂</div>
-                    <h2>Мемы</h2>
-                    <p>Студенческий юмор</p>
-                    <a href="{% url 'memes:meme_list' %}" class="section-link">Перейти →</a>
-                </div>
-                <div class="section-card">
-                    <div class="section-icon">👥</div>
-                    <h2>Сообщества</h2>
-                    <p>Объединяйтесь в группы</p>
-                    <a href="{% url 'communities:community_list' %}" class="section-link">Перейти →</a>
-                </div>
-            </div>
+    <div style="display: grid; gap: 24px;">
+        <div style="background: white; border-radius: 18px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
+            <h2 style="color: #2d4f91; margin-bottom: 16px;">Последние конспекты</h2>
+            {% if recent_notes %}
+                <ul style="padding-left: 20px;">
+                    {% for note in recent_notes %}
+                        <li style="margin-bottom: 8px;">{{ note }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Пока нет конспектов.</p>
+            {% endif %}
         </div>
-    </section>
 
-    <!-- Последние материалы -->
-    <section class="recent-content">
-        <div class="container">
-            <h2 class="section-title">✨ Последние материалы</h2>
-            <div class="recent-grid">
-                <div class="recent-column">
-                    <h3>📝 Свежие конспекты</h3>
-                    <div class="recent-list">
-                        {% for note in recent_notes %}
-                        <a href="{{ note.get_absolute_url }}" class="recent-item">
-                            <span class="item-type">📚</span>
-                            <div class="item-info">
-                                <span class="item-title">{{ note.title }}</span>
-                                <span class="item-meta">{{ note.author.username }} • {{ note.created_at|date:"d.m.Y" }}</span>
-                            </div>
-                        </a>
-                        {% empty %}
-                        <p class="empty-message">Пока нет конспектов. <a href="{% url 'notes:note_create' %}">Создайте первый!</a></p>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="recent-column">
-                    <h3>🎭 Свежие мемы</h3>
-                    <div class="recent-list">
-                        {% for meme in recent_memes %}
-                        <a href="{{ meme.get_absolute_url }}" class="recent-item">
-                            <span class="item-type">😂</span>
-                            <div class="item-info">
-                                <span class="item-title">{{ meme.title }}</span>
-                                <span class="item-meta">{{ meme.author.username }} • {{ meme.created_at|date:"d.m.Y" }}</span>
-                            </div>
-                        </a>
-                        {% empty %}
-                        <p class="empty-message">Пока нет мемов. <a href="{% url 'memes:meme_create' %}">Добавьте первый!</a></p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        <div style="background: white; border-radius: 18px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
+            <h2 style="color: #2d4f91; margin-bottom: 16px;">Последние мемы</h2>
+            {% if recent_memes %}
+                <ul style="padding-left: 20px;">
+                    {% for meme in recent_memes %}
+                        <li style="margin-bottom: 8px;">{{ meme }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Пока нет мемов.</p>
+            {% endif %}
         </div>
-    </section>
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-card">
-                <h2>Присоединяйтесь к BrainShare!</h2>
-                <p>Создавайте конспекты, делитесь мемами и общайтесь</p>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'notes:note_create' %}" class="btn btn-primary">Создать конспект</a>
-                {% else %}
-                    <a href="{% url 'users:register' %}" class="btn btn-primary">Регистрация</a>
-                {% endif %}
-            </div>
+        <div style="background: white; border-radius: 18px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
+            <h2 style="color: #2d4f91; margin-bottom: 16px;">Последние сообщества</h2>
+            {% if recent_communities %}
+                <ul style="padding-left: 20px;">
+                    {% for community in recent_communities %}
+                        <li style="margin-bottom: 8px;">{{ community }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Пока нет сообществ.</p>
+            {% endif %}
         </div>
-    </section>
-</main>
-
-<style>
-.hero-banner {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 80px 20px;
-    text-align: center;
-    color: white;
-}
-.hero-content h1 { font-size: 48px; margin-bottom: 15px; }
-.hero-subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 30px; }
-.hero-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-.btn {
-    display: inline-block;
-    padding: 14px 35px;
-    border-radius: 30px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.3s;
-}
-.btn:hover { transform: scale(1.05); }
-.btn-primary { background: white; color: #667eea; }
-.btn-secondary { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; }
-.sections { padding: 60px 20px; background: #f8f9fa; }
-.sections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-.section-card {
-    background: white;
-    padding: 35px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    transition: transform 0.3s;
-}
-.section-card:hover { transform: translateY(-5px); }
-.section-icon { font-size: 50px; margin-bottom: 15px; }
-.section-card h2 { color: #333; margin-bottom: 10px; }
-.section-card p { color: #666; margin-bottom: 20px; }
-.section-link { color: #667eea; font-weight: 600; text-decoration: none; }
-.recent-content { padding: 60px 20px; }
-.section-title { text-align: center; color: #333; font-size: 28px; margin-bottom: 40px; }
-.recent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-.recent-column h3 { color: #444; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
-.recent-list { display: flex; flex-direction: column; gap: 10px; }
-.recent-item {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    transition: background 0.3s;
-}
-.recent-item:hover { background: #eef; }
-.item-type { font-size: 24px; }
-.item-info { display: flex; flex-direction: column; }
-.item-title { color: #333; font-weight: 500; }
-.item-meta { color: #999; font-size: 12px; }
-.empty-message { color: #999; text-align: center; padding: 20px; }
-.empty-message a { color: #667eea; }
-.cta-section { padding: 60px 20px; background: #f8f9fa; }
-.cta-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 50px;
-    border-radius: 25px;
-    text-align: center;
-    color: white;
-}
-.cta-card h2 { font-size: 28px; margin-bottom: 15px; }
-.cta-card p { opacity: 0.9; margin-bottom: 25px; }
-</style>
+    </div>
+</div>
 {% endblock %}

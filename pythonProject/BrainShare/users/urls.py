@@ -5,18 +5,17 @@ from . import views
 app_name = 'users'
 
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(
-        template_name='users/login.html',
-        redirect_authenticated_user=True
-    ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('profile/', views.profile, name='profile'),
+    # Авторизация и профиль (кастомные view из второго куска)
+    path('register/', views.register_view, name='register'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
 
+    # Восстановление пароля
     path(
         'password-reset/',
         auth_views.PasswordResetView.as_view(
-            template_name='users/password_reset.html',
+            template_name='users/password_reset_form.html',
             email_template_name='users/password_reset_email.html',
             subject_template_name='users/password_reset_subject.txt',
             success_url=reverse_lazy('users:password_reset_done'),
@@ -31,7 +30,7 @@ urlpatterns = [
         name='password_reset_done',
     ),
     path(
-        'password-reset/<uidb64>/<token>/',
+        'reset/<uidb64>/<token>/',
         auth_views.PasswordResetConfirmView.as_view(
             template_name='users/password_reset_confirm.html',
             success_url=reverse_lazy('users:password_reset_complete'),
@@ -39,7 +38,7 @@ urlpatterns = [
         name='password_reset_confirm',
     ),
     path(
-        'password-reset/complete/',
+        'reset/done/',
         auth_views.PasswordResetCompleteView.as_view(
             template_name='users/password_reset_complete.html'
         ),

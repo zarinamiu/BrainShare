@@ -1,8 +1,12 @@
-from rest_framework import generics, permissions
-from drf_spectacular.utils import extend_schema
 from django.contrib.auth.models import User
+from drf_spectacular.utils import extend_schema
+from rest_framework import generics, permissions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Profile
-from .serializers import UserSerializer, UserListSerializer, ProfileSerializer
+from .serializers import ProfileSerializer, UserListSerializer, UserSerializer
 
 
 @extend_schema(
@@ -36,3 +40,24 @@ class ProfileAPIView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
+
+
+@extend_schema(
+    tags=['Пользователи'],
+    description='Информация о текущем авторизованном пользователе'
+)
+class CurrentUserAPIView(APIView):
+    """API для получения данных текущего пользователя"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile = getattr(user, 'profile', None)
+
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'bio': profile.bio if profile else '',
+            'avatar': profile.avatar.url if profile and profile.avatar else None,
+        })

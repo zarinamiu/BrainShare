@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Чат: {{ room_name }} | BrainShare{% endblock %}
+
+{% block content %}
+<div style="max-width: 950px; margin: 40px auto; padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <h1 style="font-size: 34px; color: #2d4f91; margin-bottom: 8px;">💬 Комната: {{ room_name }}</h1>
+            <p style="color: #666; font-size: 16px;">Общение в реальном времени через Django Channels + Redis</p>
+        </div>
+        <a href="{% url 'chat:room_list' %}"
+           style="text-decoration: none; background: #2d4f91; color: white; padding: 12px 18px; border-radius: 12px; font-weight: 600;">
+            ← Все комнаты
+        </a>
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="flex: 1 1 620px; min-width: 300px; background: white; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); overflow: hidden;">
+            <div style="padding: 20px 24px; background: linear-gradient(135deg, #4e73c2, #2d4f91); color: white;">
+                <h2 style="margin: 0; font-size: 24px;">Онлайн-чат</h2>
+            </div>
+
+            <div id="chat-log" style="height: 420px; overflow-y: auto; padding: 20px; background: #f5f7fb;"></div>
+
+            <div style="display: flex; gap: 12px; padding: 20px; border-top: 1px solid #e5e7eb; background: #fff;">
+                <input
+                    id="chat-message-input"
+                    type="text"
+                    placeholder="Введите сообщение"
+                    style="flex: 1; padding: 14px 16px; border: 2px solid #d4d9e3; border-radius: 12px; font-size: 15px; outline: none;"
+                >
+                <button
+                    id="chat-message-submit"
+                    type="button"
+                    style="padding: 14px 22px; border: none; border-radius: 12px; background: #2d4f91; color: white; font-weight: 700; cursor: pointer;"
+                >
+                    Отправить
+                </button>
+            </div>
+        </div>
+
+        <div style="flex: 0 1 260px; min-width: 240px; background: white; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 20px;">
+            <h3 style="font-size: 20px; color: #2d4f91; margin-bottom: 16px;">Комнаты</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                {% for room in rooms %}
+                    <a href="{% url 'chat:room' room %}"
+                       style="
+                           text-decoration: none;
+                           padding: 12px 14px;
+                           border-radius: 12px;
+                           font-weight: 600;
+                           {% if room == room_name %}
+                               background: #2d4f91;
+                               color: white;
+                           {% else %}
+                               background: #f3f5f9;
+                               color: #2d4f91;
+                           {% endif %}
+                       ">
+                        # {{ room }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ room_name|json_script:"room-name" }}
+
+<script>
+    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const chatSocket = new WebSocket(
+        protocol + '://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    const chatLog = document.getElementById('chat-log');
+    const messageInput = document.getElementById('chat-message-input');
+    const messageSubmit = document.getElementById('chat-message-submit');
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function appendSystemMessage(message) {
+        const item = document.createElement('div');
+        item.style.marginBottom = '12px';
+        item.innerHTML = `
+            <div style="text-align:center; background:#e9eef8; color:#5b6472; padding:10px 12px; border-radius:12px; font-size:14px;">
+                ${escapeHtml(message)}
+            </div>
+        `;
+        chatLog.appendChild(item);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function appendChatMessage(sender, message) {
+        const item = document.createElement('div');
+        item.style.marginBottom = '12px';
+        item.innerHTML = `
+            <div style="background:white; border-radius:14px; padding:12px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <div style="font-weight:800; color:#2d4f91; margin-bottom:4px;">${escapeHtml(sender)}</div>
+                <div style="color:#333; line-height:1.5;">${escapeHtml(message)}</div>
+            </div>
+        `;
+        chatLog.appendChild(item);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'system') {
+            appendSystemMessage(data.message);
+        } else if (data.type === 'chat') {
+            appendChatMessage(data.sender, data.message);
+        }
+    };
+
+    chatSocket.onclose = function() {
+        appendSystemMessage('Соединение закрыто.');
+    };
+
+    messageSubmit.onclick = function() {
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            return;
+        }
+
+        chatSocket.send(JSON.stringify({
+            message: message
+        }));
+
+        messageInput.value = '';
+        messageInput.focus();
+    };
+
+    messageInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            messageSubmit.click();
+        }
+    });
+
+    messageInput.focus();
+</script>
+{% endblock %}

@@ -1,53 +1,65 @@
 {% extends 'base.html' %}
 
+{% block title %}Регистрация - BrainShare{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 500px; margin: 50px auto;">
-    <h1 style="text-align: center; color: #333;">Регистрация 🎉</h1>
+<main>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-icon">📝</div>
+                <h2 class="auth-title">Регистрация в BrainShare 🎉</h2>
 
-    <form method="post" style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-top: 20px;">
-        {% csrf_token %}
+                <form method="post" class="auth-form">
+                    {% csrf_token %}
 
-        {% if form.errors %}
-            <div style="background: #ffebee; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <p style="color: #c62828; margin: 5px 0;">{{ error }}</p>
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                    <p style="color: #c62828; margin: 5px 0;">{{ error }}</p>
-                {% endfor %}
+                    <!-- Блок отображения ошибок валидации формы -->
+                    {% if form.errors %}
+                    <div class="error-box">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p>❌ {{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <p>❌ {{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Поля формы -->
+                    <div class="form-group">
+                        <label for="{{ form.username.id_for_label }}">Имя пользователя:</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">Email:</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.password1.id_for_label }}">Пароль:</label>
+                        {{ form.password1 }}
+                        <small class="form-help-text" style="display: block; margin-top: 5px; color: #666; font-size: 12px;">Минимум 8 символов</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.password2.id_for_label }}">Подтверждение пароля:</label>
+                        {{ form.password2 }}
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Зарегистрироваться
+                    </button>
+                </form>
+
+                <!-- Ссылка на авторизацию (Перенесено из первого куска) -->
+                <p class="auth-footer" style="text-align: center; margin-top: 20px;">
+                    Уже есть аккаунт? <a href="{% url 'users:login' %}" style="font-weight: bold;">Войти</a>
+                </p>
             </div>
-        {% endif %}
-
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Имя пользователя:</label>
-            {{ form.username }}
         </div>
-
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
-            {{ form.email }}
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Пароль:</label>
-            {{ form.password1 }}
-            <small style="color: #666;">Минимум 8 символов</small>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Подтверждение пароля:</label>
-            {{ form.password2 }}
-        </div>
-
-        <button type="submit" style="background: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%;">
-            Зарегистрироваться
-        </button>
-    </form>
-
-    <p style="text-align: center; margin-top: 20px;">
-        Уже есть аккаунт? <a href="{% url 'users:login' %}" style="color: #4CAF50; font-weight: bold;">Войти</a>
-    </p>
-</div>
+    </div>
+</main>
 {% endblock %}

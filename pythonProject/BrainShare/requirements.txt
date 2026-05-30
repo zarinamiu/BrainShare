@@ -1,0 +1,45 @@
+# Основные компоненты Django и Channels
+Django==6.0.2
+channels==4.3.2
+channels_redis==4.3.0
+daphne==4.2.1
+
+# Аутентификация и API (DRF)
+djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
+dj-rest-auth==7.2.0
+django-allauth==65.16.1
+
+# Документация API
+drf-spectacular==0.29.0
+drf-yasg
+
+# Работа с данными и графиками
+pandas==2.3.1
+numpy==2.2.3
+matplotlib==3.10.1
+Pillow==11.0.0
+
+# База данных PostgreSQL и утилиты
+psycopg2-binary==2.9.11
+redis==7.4.0
+python-dotenv==1.2.2
+requests==2.33.1
+pytils==0.3
+
+# Тестирование
+pytest==9.0.3
+pytest-asyncio==1.4.0
+pytest-django==4.12.0
+
+# Асинхронные сети и криптография (Twisted)
+Twisted==26.4.0
+autobahn==24.4.2
+cryptography==48.0.0
+pyOpenSSL==26.2.0
+
+# Системные пакеты без жесткой фиксации (для разрешения конфликтов)
+pytz
+tzdata
+sqlparse
+asgiref
